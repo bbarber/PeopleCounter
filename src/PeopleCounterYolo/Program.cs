@@ -1,27 +1,21 @@
-﻿using Yolov8Net;
-using SixLabors.Fonts;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Processing;
+﻿using System.Diagnostics;
+using Yolov8Net;
 
+var sw = Stopwatch.StartNew();
 using var yolo = YoloV8Predictor.Create("./Models/yolov8m.onnx");
+Console.WriteLine($"Model loaded in {sw.ElapsedMilliseconds}ms");
 
-// Provide an input image.  Image will be resized to model input if needed.
-using var image = SixLabors.ImageSharp.Image.Load("./Assets/doggo.jpg");
+sw.Restart();
+using var image = SixLabors.ImageSharp.Image.Load("./Assets/person_01.jpg");
+Console.WriteLine($"Image loaded in {sw.ElapsedMilliseconds}ms");
+
+sw.Restart();
 var predictions = yolo.Predict(image);
+Console.WriteLine($"Predictions done in {sw.ElapsedMilliseconds}ms");
 
 
 foreach (var pred in predictions)
 {
-    var originalImageHeight = image.Height;
-    var originalImageWidth = image.Width;
-
-    var x = Math.Max(pred.Rectangle.X, 0);
-    var y = Math.Max(pred.Rectangle.Y, 0);
-    var width = Math.Min(originalImageWidth - x, pred.Rectangle.Width);
-    var height = Math.Min(originalImageHeight - y, pred.Rectangle.Height);
-
-    // Bounding Box Text
     string text = $"{pred.Label.Name} [{pred.Score}]";
     Console.WriteLine(text);
 }
