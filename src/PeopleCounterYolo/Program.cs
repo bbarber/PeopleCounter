@@ -1,9 +1,11 @@
 ﻿using Emgu.CV;
 using Yolov8Net;
+using Emgu.CV.CvEnum;
+using SixLabors.ImageSharp;
+using System.Diagnostics;
 
 
-
-using var yolo = YoloV8Predictor.Create("./Models/yolov8m.onnx");
+using var yolo = YoloV8Predictor.Create("./Models/yolo11n.onnx");
 
 var filename = "./Assets/webcam.jpg";
 if (args.Length > 0) filename = args[0];
@@ -11,11 +13,11 @@ using var capture = new VideoCapture(0, VideoCapture.API.Any);
 
 while (true)
 {
-    capture.Set(Emgu.CV.CvEnum.CapProp.AutoExposure, 20); // Enable auto exposure
+    var sw = Stopwatch.StartNew();
+    capture.Set(CapProp.AutoExposure, 20);
     var webcamImage = capture.QueryFrame();
-    webcamImage.Save(filename);
 
-    using var image = SixLabors.ImageSharp.Image.Load("./Assets/webcam.jpg");
+    using var image = Image.Load("./Assets/webcam.jpg");
     var predictions = yolo.Predict(image);
 
     Console.WriteLine("Predictions:");
@@ -24,4 +26,6 @@ while (true)
         string text = $"{pred.Label.Name} [{pred.Score}]";
         Console.WriteLine(text);
     }
+
+    Console.WriteLine($"Prediction took {sw.ElapsedMilliseconds}ms. (FPS: {1000 / sw.ElapsedMilliseconds})");
 }
