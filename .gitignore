@@ -400,3 +400,5 @@ FodyWeavers.xsd
 # Rider files
 .idea/
 *.sln.DotSettings.user
+
+webcam.jpg
