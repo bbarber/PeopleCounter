@@ -402,3 +402,4 @@ FodyWeavers.xsd
 *.sln.DotSettings.user
 
 webcam.jpg
+secrets.json
